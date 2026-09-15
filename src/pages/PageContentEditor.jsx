@@ -112,10 +112,10 @@ export default function PageContentEditor({
 
   return (
     <div style={{ background: '#FFFFFF', padding: '28px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
-      <h2 style={{ marginTop: 0, fontSize: '1.3rem', color: '#111827' }}>
+      <h2 style={{ margin: '0 0 8px', fontSize: '1.3rem', lineHeight: 1.4, color: '#111827' }}>
         📝 {isEn ? 'Page Text / Images' : '페이지 문구 · 이미지 수정'}
       </h2>
-      <p style={{ color: '#6B7280', fontSize: '0.88rem', marginTop: '-6px' }}>
+      <p style={{ color: '#6B7280', fontSize: '0.88rem', margin: 0 }}>
         {isEn
           ? 'Type Korean only — the English version is auto-translated when you leave it blank.'
           : '한글만 입력하시면 됩니다. 영문칸을 비워두고 저장하면 자동으로 번역되어 채워집니다. 엔터로 줄을 바꾸면 화면에도 그대로 줄이 바뀝니다.'}
