@@ -104,7 +104,7 @@ function cropImageToBox(file, targetWidth, targetHeight, { maxBase64Length = 850
 
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const keepPng = file.type === 'image/png';
+      let keepPng = file.type === 'image/png';
 
       const draw = () => {
         canvas.width = outW;
@@ -127,6 +127,12 @@ function cropImageToBox(file, targetWidth, targetHeight, { maxBase64Length = 850
       draw();
       let quality = 0.88;
       let dataUrl = canvas.toDataURL(keepPng ? 'image/png' : 'image/jpeg', quality);
+      // Same PNG issue as compressImage: switch an oversized PNG to JPEG instead of shrinking it.
+      if (keepPng && dataUrl.length > maxBase64Length) {
+        keepPng = false;
+        draw();
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+      }
       while (dataUrl.length > maxBase64Length && (quality > 0.35 || outW > 400)) {
         if (quality > 0.35) {
           quality -= 0.08;
