@@ -36,9 +36,20 @@ function compressImage(file, { maxDimension = 1600, startQuality = 0.85, maxBase
       ctx.drawImage(img, 0, 0, width, height);
 
       // PNG(투명 배경)를 쓴 파일은 투명도를 지키기 위해 PNG로, 그 외는 용량이 훨씬 작은 JPEG로 인코딩
-      const keepPng = file.type === 'image/png';
+      let keepPng = file.type === 'image/png';
       let quality = startQuality;
       let dataUrl = canvas.toDataURL(keepPng ? 'image/png' : 'image/jpeg', quality);
+
+      // PNG는 품질 옵션이 없어서, 크면 아래 루프가 가로세로를 계속 줄여 글자가 뭉개진다
+      // (예: 1116x2000 상세 인포그래픽 -> 419x750). 용량 초과인 PNG는 흰 배경을 깔고
+      // 원래 해상도 그대로 JPEG로 바꿔 품질만 조절한다.
+      if (keepPng && dataUrl.length > maxBase64Length) {
+        keepPng = false;
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+      }
 
       // 여전히 너무 크면 품질을 낮추고, 품질을 최대로 낮췄는데도(또는 PNG라 품질 옵션이 없어서)
       // 여전히 크면 캔버스 크기 자체를 반복해서 줄인다 (가로로 긴 세로 인포그래픽처럼
