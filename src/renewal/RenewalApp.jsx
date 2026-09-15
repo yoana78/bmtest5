@@ -18,7 +18,7 @@ const Admin = lazy(() => import('../pages/Admin'))
 const Arrow = () => <span aria-hidden="true">↗</span>
 function Logo() {
   const { tr } = useCopy()
- return <Link to="/" className="logo" aria-label={tr("부명 홈")}><img className="official-ci" src="/assets/boomyung_ci_logo.png" alt={tr("BOOMYUNG CO., LTD. 부명 공식 CI")}/></Link> }
+ return <Link to="/" className="logo" aria-label={tr("부명 홈")} onClick={()=>window.scrollTo({top:0,behavior:"instant"})}><img className="official-ci" src="/assets/boomyung_ci_logo.png" alt={tr("BOOMYUNG CO., LTD. 부명 공식 CI")}/></Link> }
 function Header() {
   const { tr, en } = useCopy()
   const { toggleLang } = useLanguage()
