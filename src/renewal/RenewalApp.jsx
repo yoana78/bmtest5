@@ -120,7 +120,7 @@ export default function RenewalApp() {
   const { tr } = useCopy()
 
   const location = useLocation()
-  if(location.pathname === '/admin') return <><style>{legacyStyles}</style><Suspense fallback={<p>{tr("관리자 화면을 불러오는 중입니다.")}</p>}><Admin/></Suspense></>
+  if(location.pathname === '/admin') return <><style>{legacyStyles}</style><Suspense fallback={<div aria-busy="true" aria-label={tr("관리자 화면을 불러오는 중입니다.")} style={{ minHeight: '100vh', background: '#fff' }}/>}><Admin/></Suspense></>
   return <><a className="skip-link" href="#main-content" onClick={e => {e.preventDefault();document.getElementById('main-content')?.focus()}}>{tr("본문 바로가기")}</a><Header key={location.pathname}/><main id="main-content" tabIndex={-1}><Routes><Route path="/" element={<ImmersiveHome/>}/><Route path="/products" element={<Products/>}/><Route path="/contact" element={<Contact/>}/><Route path="/catalog/*" element={<Navigate to="/products" replace/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Routes></main><Footer/><PageMotion/></>
 }
 
