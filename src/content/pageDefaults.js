@@ -168,6 +168,100 @@ export const PAGE_SCHEMA = {
     ],
   },
 
+  landing: {
+    label: '메인 랜딩 (신규 리뉴얼)',
+    sections: [
+      {
+        label: '히어로 1단계 — 1995',
+        note: '배경 영상은 코드에 고정. 문구만 여기서 바꿀 수 있습니다.',
+        fields: [
+          { key: 'hero1Note', label: '연도 아래 보조 문구', type: 'textarea', size: '1.1rem', ko: '반려의 일상을 생각하는 마음,\n부명의 시작.', en: 'The heart that considers everyday life with pets,\nthe beginning of BOOMYUNG.' },
+        ],
+      },
+      {
+        label: '히어로 2단계 — 슬로건',
+        fields: [
+          { key: 'hero2Slogan', label: '슬로건', type: 'textarea', size: '3.4rem', ko: '함께하는 일상에,\n건강한 행복을.', en: 'Better everyday,\nhappier life together.' },
+        ],
+      },
+      {
+        label: '히어로 3단계 — 회사명',
+        fields: [
+          { key: 'hero3Name', label: '회사명 (국문)', type: 'text', size: '3.4rem', koOnly: true, ko: '부명' },
+        ],
+      },
+      {
+        label: '히어로 4단계 — 서브슬로건',
+        fields: [
+          { key: 'hero4Sub', label: '서브슬로건', type: 'textarea', size: '1.4rem', ko: '반려동물을 향한 진심을 담아\n좋은 먹거리와\n더 나은 내일을 만듭니다.', en: 'With sincerity for pets,\nwe create good food\nand a better tomorrow.' },
+          { key: 'hero4FilmButton', label: '브랜드 필름 버튼', type: 'text', size: '0.95rem', ko: '브랜드 필름 보기', en: 'Watch Brand Film' },
+          { key: 'hero4BizLink', label: '비즈니스 링크', type: 'text', size: '0.95rem', ko: '부명의 비즈니스', en: "BOOMYUNG's Business" },
+        ],
+      },
+      {
+        label: '제품 소개 렌즈 섹션',
+        fields: [
+          { key: 'lensStatement', label: '큰 문장', type: 'textarea', size: '2.6rem', ko: '좋은 일상을\n만드는 연결.', en: 'A connection that\nmakes good everyday life.' },
+          { key: 'lensFootnote', label: '보조 문구', type: 'textarea', size: '0.9rem', ko: '작은 디테일에서 시작해, 반려의 일상에 닿기까지.', en: 'From a small detail, to touching everyday life with pets.' },
+        ],
+      },
+      {
+        label: '사업 소개 — MAKE (01)',
+        fields: [
+          { key: 'makeTitle', label: '챕터 제목', type: 'textarea', size: '2.2rem', ko: '좋은 제품은\n좋은 질문에서.', en: 'Good products\nstart with good questions.' },
+          { key: 'makeDesc', label: '챕터 설명', type: 'textarea', size: '1rem', ko: '무엇을 먹고, 어떻게 생활할까요? 반려동물의 일상을 이해하는 것에서 부명의 제품 개발은 시작됩니다.', en: 'What do they eat, how do they live? BOOMYUNG product development begins with understanding everyday pet life.' },
+          { key: 'makeCard1Title', label: '카드1 제목 (OEM/ODM)', type: 'text', size: '1.3rem', ko: '아이디어를 제품으로', en: 'From idea to product' },
+          { key: 'makeCard1Body', label: '카드1 본문', type: 'textarea', size: '0.9rem', ko: '제품 기획과 개발부터 제조, 패키지까지. 브랜드에 맞는 제품을 함께 완성합니다.', en: 'From planning and development to manufacturing and packaging, completed together for your brand.' },
+          { key: 'makeCard1Cta', label: '카드1 버튼', type: 'text', size: '0.85rem', ko: '제조 상담', en: 'Manufacturing Inquiry' },
+          { key: 'makeCard2Title', label: '카드2 제목 (제품)', type: 'text', size: '1.3rem', ko: '매일을 위한 선택', en: 'A choice for everyday' },
+          { key: 'makeCard2Body', label: '카드2 본문', type: 'textarea', size: '0.9rem', ko: '사료와 간식, 생활용품까지. 함께하는 하루에 필요한 제품을 만듭니다.', en: 'Food, treats, and daily supplies — products needed for everyday life together.' },
+          { key: 'makeCard2Cta', label: '카드2 버튼', type: 'text', size: '0.85rem', ko: '제품 보기', en: 'View Products' },
+        ],
+      },
+      {
+        label: '사업 소개 — CONNECT (02)',
+        fields: [
+          { key: 'connectTitle', label: '챕터 제목', type: 'textarea', size: '2.2rem', ko: '브랜드에서\n우리의 일상으로.', en: 'From brand\nto our everyday life.' },
+          { key: 'connectDesc', label: '챕터 설명', type: 'textarea', size: '1rem', ko: '좋은 제품이 필요한 곳에 닿을 수 있도록. 브랜드와 국내의 다양한 유통 채널을 연결합니다.', en: 'So good products reach where they are needed — connecting brands with domestic distribution channels.' },
+          { key: 'connectCard1Title', label: '카드1 제목 (국내 유통)', type: 'text', size: '1.3rem', ko: '더 가까이 만나는 가치', en: 'Value found closer to you' },
+          { key: 'connectCard1Body', label: '카드1 본문', type: 'textarea', size: '0.9rem', ko: '온라인과 오프라인을 잇는 유통. 파트너와 함께 브랜드의 접점을 넓혀갑니다.', en: 'Distribution connecting online and offline, expanding brand touchpoints together with partners.' },
+          { key: 'connectCard1Cta', label: '카드1 버튼', type: 'text', size: '0.85rem', ko: '유통 상담', en: 'Distribution Inquiry' },
+          { key: 'connectCard2Title', label: '카드2 제목 (브랜드)', type: 'text', size: '1.3rem', ko: '각자의 개성, 같은 마음', en: 'Different personalities, same heart' },
+          { key: 'connectCard2Body', label: '카드2 본문', type: 'textarea', size: '0.9rem', ko: '데이스포, 벨버드, 에버그로, 하우펫. 더 좋은 반려생활을 향한 다양한 답을 만납니다.', en: 'Dayspo, Bellbird, Evergro, Howpet — diverse answers toward a better pet life.' },
+          { key: 'connectCard2Cta', label: '카드2 버튼', type: 'text', size: '0.85rem', ko: '브랜드 제품 보기', en: 'View Brand Products' },
+        ],
+      },
+      {
+        label: '사업 소개 — BEYOND (03)',
+        fields: [
+          { key: 'beyondTitle', label: '챕터 제목', type: 'textarea', size: '2.2rem', ko: '가능성에는\n국경이 없으니까.', en: 'Possibility knows\nno borders.' },
+          { key: 'beyondDesc', label: '챕터 설명', type: 'textarea', size: '1rem', ko: '국내의 좋은 제품을 해외로, 세계의 다양한 브랜드를 국내로. 더 넓은 세상의 반려생활을 이어갑니다.', en: 'Good domestic products go global, diverse global brands come home — connecting pet life to a wider world.' },
+          { key: 'beyondCard1Title', label: '카드1 제목 (해외 사업)', type: 'text', size: '1.3rem', ko: '세상을 향한 연결', en: 'A connection to the world' },
+          { key: 'beyondCard1Body', label: '카드1 본문', type: 'textarea', size: '0.9rem', ko: '해외 수출과 브랜드 수입을 통해 새로운 시장의 기회를 함께 찾습니다.', en: 'Finding new market opportunities together through overseas export and brand import.' },
+          { key: 'beyondCard1Cta', label: '카드1 버튼', type: 'text', size: '0.85rem', ko: '해외 사업 문의', en: 'Global Business Inquiry' },
+          { key: 'beyondCard2Title', label: '카드2 제목 (파트너십)', type: 'text', size: '1.3rem', ko: '다음 이야기는, 함께', en: 'The next story, together' },
+          { key: 'beyondCard2Body', label: '카드2 본문', type: 'textarea', size: '0.9rem', ko: '당신의 브랜드와 부명의 경험이 만나 더 큰 가능성이 됩니다.', en: 'Your brand and BOOMYUNG’s experience meet to create greater possibility.' },
+          { key: 'beyondCard2Cta', label: '카드2 버튼', type: 'text', size: '0.85rem', ko: '파트너십 시작하기', en: 'Start a Partnership' },
+        ],
+      },
+      {
+        label: '브랜드 캐러셀 부제',
+        fields: [
+          { key: 'brandSubtitle', label: '부제 문구', type: 'textarea', size: '1rem', ko: '반려동물의 일상을 함께하는 부명의 브랜드를 소개합니다.', en: "Introducing BOOMYUNG's brands that share everyday life with pets." },
+        ],
+      },
+      {
+        label: '문의 CTA (하단)',
+        fields: [
+          { key: 'contactCtaImage', label: '전용 배경 사진', type: 'image', width: 2400, height: 1500, src: '/assets/boomyung/companionship.webp' },
+          { key: 'contactCtaBody', label: '안내 문구', type: 'textarea', size: '1.05rem', ko: '다음 가능성을 함께 이야기해요.', en: "Let's talk about the next possibility together." },
+          { key: 'contactCtaButton', label: '버튼 문구', type: 'text', size: '0.9rem', ko: '파트너십 문의하기', en: 'Contact for Partnership' },
+          { key: 'contactCtaCaption', label: '이미지 위 캡션 (영문 고정 스타일)', type: 'textarea', size: '1.2rem', koOnly: true, ko: 'BETTER PET LIFE.\nTOGETHER.' },
+        ],
+      },
+    ],
+  },
+
   contact: {
     label: '문의하기',
     sections: [
