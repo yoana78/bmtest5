@@ -167,5 +167,14 @@
   "베트남": "Vietnam",
   "스페인": "Spain",
   "스웨덴": "Sweden",
-  "영국": "United Kingdom"
+  "영국": "United Kingdom",
+  "규격": "Size",
+  "원산지": "Origin",
+  "유통기한": "Shelf life",
+  "원료": "Ingredients",
+  "조단백": "Crude protein",
+  "조지방": "Crude fat",
+  "조섬유": "Crude fiber",
+  "수분": "Moisture",
+  "바로 구매하기": "Buy now"
 }

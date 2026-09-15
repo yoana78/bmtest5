@@ -14,3 +14,31 @@
 
 @media(max-width:720px){.hero-poster,.hero-video{mask-image:linear-gradient(to bottom,transparent 0%,#000 24%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 24%)}}
 
+
+/* product detail modal — image stage + spec sheet */
+.modal.product-modal{max-width:1100px;width:calc(100% - 40px);padding:0;overflow:hidden;max-height:88vh}
+.product-modal .modal-close{z-index:2;top:16px;right:18px;width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:24px;line-height:1}
+.pd{display:grid;grid-template-columns:1fr 1fr;max-height:88vh}
+.pd-media{background:#ecece4;display:flex;align-items:center;justify-content:center;padding:48px;min-width:0}
+.pd-media img{max-width:100%;max-height:420px;object-fit:contain;mix-blend-mode:multiply}
+.pd-body{padding:60px 48px 44px;overflow-y:auto;max-height:88vh;min-width:0;font-size:14px;line-height:1.7}
+.pd-brand{display:block;font-size:12px;letter-spacing:.08em;color:#8a7a55;margin-bottom:10px}
+.modal .pd-body h2{font-size:28px;line-height:1.35;margin:0 0 14px;padding-right:34px}
+.pd-meta{display:flex;flex-wrap:wrap;gap:6px 26px}
+.pd-meta strong,.pd-shelf strong{font-weight:700;margin-right:4px}
+.pd-shelf{margin:12px 0 0}
+.pd-features{padding-left:20px;margin:20px 0 24px}
+.pd-features li{margin-bottom:6px}
+.pd-nutrition{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));border:1px solid var(--line);background:#fff;margin-bottom:24px}
+.pd-nutrition>div{padding:14px 6px;text-align:center;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.pd-nutrition>div:first-child{border-left:0}
+.pd-nutrition span{font-size:12px;color:var(--muted)}
+.pd-nutrition b{font-size:14px;font-weight:600;white-space:nowrap}
+.pd-ingredients{border-top:1px solid var(--line);padding-top:18px}
+.pd-ingredients strong{display:block;font-size:15px;margin-bottom:8px}
+.pd-ingredients p{margin:0;color:var(--muted);font-size:13.5px}
+.pd-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.pd-actions .pill{margin-top:0}
+.pd-detail-images{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.pd-detail-images img{width:100%;height:auto;display:block;border:1px solid var(--line)}
+@media(max-width:720px){.modal.product-modal{max-height:90vh;overflow-y:auto;padding:0}.pd{grid-template-columns:1fr;max-height:none}.pd-media{padding:44px 24px 24px}.pd-media img{max-height:230px}.pd-body{padding:24px 22px 30px;max-height:none;overflow:visible}.modal .pd-body h2{font-size:22px}.pd-nutrition{grid-template-columns:repeat(2,1fr)}.pd-nutrition>div:nth-child(3){border-left:0}.pd-nutrition>div:nth-child(n+3){border-top:1px solid var(--line)}}
