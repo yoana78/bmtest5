@@ -4,7 +4,13 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link, Navigate, Route, Routes, useLocation, useSearchParams } from 'react-router-dom'
 import { useData } from '../context/DataContext'
 import { privacyPolicyKo, privacyPolicyEn } from '../data/privacyPolicy'
-import legacyStyles from '../index.css?url'
+// vite-plugin-singlefile inlines every asset into one index.html, so no separate
+// index.css file actually exists in the production build -- a `?url` import used to
+// resolve to a URL that 404s (and Cloudflare's SPA fallback silently serves index.html
+// for it instead of a real 404, so the browser gets HTML with a .css extension and
+// discards the whole stylesheet as invalid). `?raw` inlines the CSS text at build time
+// instead, so it works the same in dev and in the production build.
+import legacyStyles from '../index.css?raw'
 import ImmersiveHome from './ImmersiveHome'
 import './immersive.css'
 
@@ -98,7 +104,7 @@ export default function RenewalApp() {
   const { tr } = useCopy()
 
   const location = useLocation()
-  if(location.pathname === '/admin') return <><link rel="stylesheet" href={legacyStyles}/><Suspense fallback={<p>{tr("관리자 화면을 불러오는 중입니다.")}</p>}><Admin/></Suspense></>
+  if(location.pathname === '/admin') return <><style>{legacyStyles}</style><Suspense fallback={<p>{tr("관리자 화면을 불러오는 중입니다.")}</p>}><Admin/></Suspense></>
   return <><a className="skip-link" href="#main-content" onClick={e => {e.preventDefault();document.getElementById('main-content')?.focus()}}>{tr("본문 바로가기")}</a><Header key={location.pathname}/><main id="main-content" tabIndex={-1}><Routes><Route path="/" element={<ImmersiveHome/>}/><Route path="/products" element={<Products/>}/><Route path="/contact" element={<Contact/>}/><Route path="/catalog/*" element={<Navigate to="/products" replace/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Routes></main><Footer/><PageMotion/></>
 }
 
