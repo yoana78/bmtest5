@@ -16,12 +16,12 @@
 
 
 /* product detail modal — image stage + spec sheet */
-.modal.product-modal{max-width:1100px;width:calc(100% - 40px);padding:0;overflow:hidden;max-height:88vh;border-radius:24px}
+.modal.product-modal{background:#f7f7f0;max-width:1100px;width:calc(100% - 40px);padding:0;overflow:hidden;max-height:88vh;border-radius:24px}
 .product-modal .modal-close{z-index:2;top:16px;right:18px;width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:24px;line-height:1}
 .pd{display:grid;grid-template-columns:1fr 1fr;max-height:88vh}
 .pd-media{background:radial-gradient(circle at 50% 48%,#f4f6ec 0%,#edefe5 55%,#e3e7d6 100%);display:flex;align-items:center;justify-content:center;padding:48px;min-width:0;isolation:isolate}
 .pd-media img{max-width:100%;max-height:420px;object-fit:contain;mix-blend-mode:multiply}
-.pd-body{background:var(--cream);padding:60px 48px 44px;overflow-y:auto;max-height:88vh;min-width:0;font-size:14px;line-height:1.7}
+.pd-body{background:#f7f7f0;padding:60px 48px 44px;overflow-y:auto;max-height:88vh;min-width:0;font-size:14px;line-height:1.7}
 .pd-brand{display:block;font-size:12px;letter-spacing:.08em;color:#8a7a55;margin-bottom:10px}
 .modal .pd-body h2{font-size:28px;line-height:1.35;margin:0 0 14px;padding-right:34px}
 .pd-meta{display:flex;flex-wrap:wrap;gap:6px 26px}
