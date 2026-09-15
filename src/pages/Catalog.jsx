@@ -237,7 +237,7 @@ export default function Catalog() {
     <div className="bm-catalog-page">
       {/* ====== 1. 서브 히어로 (Sub Hero) ====== */}
       <section
-        className="bm-sub-hero"
+        className="bm-sub-hero header-extended-hero"
         style={{
           backgroundImage: "url('https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=2560&q=80')"
         }}

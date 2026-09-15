@@ -2,6 +2,14 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Disable restoration before the browser lays out a tall scroll scene.
+      history.scrollRestoration = 'manual';
+      if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+        if (location.hash.startsWith('#/#')) history.replaceState(null, '', location.pathname + location.search + '#/');
+        window.addEventListener('pageshow', () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }), { once: true });
+      }
+    </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>(주)부명 | BOOMYUNG</title>
@@ -17,6 +25,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="../src/main.jsx"></script>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

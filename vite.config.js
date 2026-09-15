@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { viteSingleFile } from 'vite-plugin-singlefile'
+import { fileURLToPath } from 'node:url'
 
 // 주의: 이 프로젝트는 소스 코드와 "배포용 index.html"이 같은 저장소(폴더)에 있음.
 // vite가 빌드할 때 읽는 원본 HTML은 반드시 app/index.html 이어야 하고,
@@ -11,6 +12,7 @@ export default defineConfig({
   root: 'app',
   base: './',
   publicDir: '../public',
+  resolve: { alias: { '/src': fileURLToPath(new URL('./src', import.meta.url)) } },
   build: {
     outDir: '../dist',
     emptyOutDir: true

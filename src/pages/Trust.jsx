@@ -1,3 +1,4 @@
+import ExpoGallery from '../components/ExpoGallery';
 // 리뉴얼 신뢰와 인증 페이지 (Trust & Certification Renewal 2026)
 // 1. 역동적 서브 히어로 (투명 헤더 연동 + 시네마틱 다크 틴트)
 // 2. 신뢰 지표 KPI 카드 바 (국제 인증, 특허/디자인, 글로벌 박람회, 대형 유통망)
@@ -68,8 +69,8 @@ export default function Trust() {
       titleEn: 'Environmental Management System',
       descKo: '생산 전 과정에서 환경 영향을 최소화하고 친환경 제조 기준을 엄격히 준수하는 국제 환경경영 표준을 적용합니다.',
       descEn: 'Certified international environmental management standard minimizing footprint across all production stages.',
-      image: './assets/certifications/iso14001.png',
-      imageEn: './assets/certifications/iso14001_en.png',
+      image: null,
+      imageEn: null,
       logo: './assets/cert_logos/iso14001_logo.svg'
     },
     {
@@ -78,8 +79,8 @@ export default function Trust() {
       titleEn: 'Food Safety Management System',
       descKo: '원료 입고부터 제조, 멸균, 포장 전 과정에 걸쳐 글로벌 식품 규격에 부합하는 안전 경영 시스템을 구축했습니다.',
       descEn: 'Global food safety standard implemented across entire pipeline from raw sourcing to sterile packaging.',
-      image: './assets/certifications/iso22000.png',
-      imageEn: './assets/certifications/iso22000_en.png',
+      image: null,
+      imageEn: null,
       logo: './assets/cert_logos/iso22000_logo.svg'
     },
     {
@@ -88,8 +89,8 @@ export default function Trust() {
       titleEn: 'Hazard Analysis Critical Control Point',
       descKo: '식품 위해요소를 과학적·체계적으로 사전 분석 및 통제하여 반려동물이 안심하고 먹을 수 있는 제품을 생산합니다.',
       descEn: 'Systematic preventive approach to food safety biological, chemical, and physical hazards.',
-      image: './assets/certifications/haccp.png',
-      imageEn: './assets/certifications/haccp_en.png',
+      image: null,
+      imageEn: null,
       logo: './assets/cert_logos/haccp_logo.svg'
     },
     {
@@ -217,7 +218,7 @@ export default function Trust() {
     <div className="bm-trust-page">
       {/* ====== 1. 서브 히어로 (Sub Hero) ====== */}
       <section
-        className="bm-sub-hero"
+        className="bm-sub-hero header-extended-hero"
         style={{
           backgroundImage: `url('${img('heroImage')}')`
         }}
@@ -306,44 +307,7 @@ export default function Trust() {
         </section>
 
         {/* ====== 4. 글로벌 박람회 갤러리 섹션 ====== */}
-        <section id="expos" className="bm-expo-showcase-section">
-          <div className="bm-trust-section-head">
-            <div>
-              <span className="bm-trust-tag">{txt('expoEyebrow')}</span>
-              <h2 className="bm-trust-title">{txt('expoTitle')}</h2>
-            </div>
-            <p className="bm-trust-desc" style={{ whiteSpace: 'pre-line' }}>
-              {txt('expoBody')}
-            </p>
-          </div>
-
-          {expoYearGroups.map(({ year, labelKo, labelEn, descKo, descEn, items }) => (
-            <div key={year} className="bm-expo-year-card">
-              <div className="bm-expo-year-header">
-                <div className="bm-expo-year-badge">
-                  {year} <span>{isEn ? labelEn : labelKo}</span>
-                </div>
-                <span className="bm-expo-year-desc">{isEn ? descEn : descKo}</span>
-              </div>
-
-              <div className="bm-expo-grid">
-                {items.map(({ photo, index }) => (
-                  <div
-                    key={photo.id}
-                    className="bm-expo-card"
-                    onClick={() => setSelectedPhotoIndex(index)}
-                  >
-                    <img src={photo.image} alt={isEn ? photo.titleEn : photo.titleKo} loading="lazy" />
-                    <div className="bm-expo-card-overlay">
-                      <span className="bm-expo-card-loc">{isEn ? photo.locationEn : photo.locationKo}</span>
-                      <span className="bm-expo-card-title">{isEn ? photo.titleEn : photo.titleKo}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </section>
+        <ExpoGallery groups={expoYearGroups} en={isEn} onOpen={setSelectedPhotoIndex} title={txt('expoTitle')}/>
 
         {/* ====== 7. 유통 네트워크 및 파트너사 로고 벽 ====== */}
         <section id="partners" style={{ marginBottom: '100px' }}>

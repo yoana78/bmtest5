@@ -97,8 +97,9 @@ export const historyItems = [
     eraBadgeKo: '창립',
     eraBadgeEn: 'Founding',
     titleKo: '(주)부명 설립',
-    titleEn: 'Establishment of BOOMYOUNG CO., LTD.',
+    titleEn: 'Establishment of BOOMYUNG CO., LTD.',
     itemsKo: ['반려동물 용품 및 식품 전문 제조·유통 기업 (주)부명 설립'],
-    itemsEn: ['Founded BOOMYOUNG CO., LTD. specializing in pet food & supplies']
+    itemsEn: ['Founded BOOMYUNG CO., LTD. specializing in pet food & supplies']
   }
 ];
+

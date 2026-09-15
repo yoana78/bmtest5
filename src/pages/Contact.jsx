@@ -151,7 +151,7 @@ export default function Contact() {
     <div className="bm-contact-page">
       {/* ====== 1. 시네마틱 서브 히어로 ====== */}
       <section
-        className="bm-sub-hero"
+        className="bm-sub-hero header-extended-hero"
         style={{
           backgroundImage: `url(${b2bBuildingImg})`
         }}

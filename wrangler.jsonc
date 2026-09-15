@@ -1,13 +1,13 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "bmtest3",
+  "name": "bmtest5",
   "pages_build_output_dir": "./",
   "compatibility_date": "2025-01-01",
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "boomyung-sitec-db",
-      "database_id": "051125d6-cd39-4987-a80a-d04ab9551fb9"
+      "database_name": "boomyung-sitee-db",
+      "database_id": "ffc02d0f-3079-4cb0-b4e1-ac9c1c9374a9"
     }
   ],
   "ai": {

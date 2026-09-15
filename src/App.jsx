@@ -23,7 +23,7 @@ function App() {
       <ScrollToTop />
       {/* SECTION: 모든 페이지 상단 공통 헤더(로고, 메뉴, 언어/테마 전환) */}
       <Header />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         {/* SECTION: 주소(경로)별로 표시할 페이지를 연결하는 라우팅 테이블 */}
         <Routes>
           <Route path="/" element={<Home />} />               {/* 홈(메인) 페이지 */}

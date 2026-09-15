@@ -21,8 +21,8 @@ export const PAGE_SCHEMA = {
         note: '배경 영상은 코드에 고정된 파일을 사용합니다. 문구만 여기서 바꿀 수 있습니다.',
         fields: [
           { key: 'heroSub', label: '작은 영문 라벨', type: 'text', size: '0.85rem', koOnly: true, ko: 'Respect for Pet Life' },
-          { key: 'heroTitle', label: '큰 제목 (타이핑 효과로 나옵니다)', type: 'textarea', size: '2.6rem', ko: '존중은 아주 작고\n사소한 것에서부터\n시작됩니다', en: 'Respect begins with small and thoughtful care.' },
-          { key: 'heroBody', label: '본문', type: 'textarea', size: '1.05rem', ko: '(주)부명은 반려동물의 생명과 건강을 존중하는 정직한 품질로 펫 헬스케어의 미래를 열어갑니다.', en: 'BOOMYUNG creates a healthier future for pets through uncompromised quality and transparent craftsmanship.' },
+          { key: 'heroTitle', label: '메인 제목', type: 'textarea', size: '4.6rem', ko: '함께하는 일상에,\n건강한 행복을.', en: 'Better food.\nHappier life, together.' },
+          { key: 'heroBody', label: '본문', type: 'textarea', size: '1.05rem', ko: '반려동물을 향한 진심을 담아\n좋은 먹거리와 더 나은 내일을 만듭니다.', en: 'Thoughtful nutrition and everyday care,\nfor a healthier life by your side.' },
           { key: 'heroButton', label: '버튼 문구', type: 'text', size: '0.85rem', ko: '브랜드 포트폴리오', en: 'Explore Brands' },
         ],
       },
@@ -38,7 +38,7 @@ export const PAGE_SCHEMA = {
         label: '브랜드 & 대표 상품 섹션 제목',
         fields: [
           { key: 'coreEyebrow', label: '작은 영문 라벨', type: 'text', size: '0.78rem', koOnly: true, ko: 'Core Brands & Products' },
-          { key: 'coreTitle', label: '섹션 제목', type: 'text', size: '1.8rem', ko: '부명 핵심 브랜드 & 대표 상품', en: 'Our Brands & Best Products' },
+          { key: 'coreTitle', label: '섹션 제목', type: 'textarea', size: '3.2rem', ko: '매일의 한 끼부터,\n기분 좋은 작은 보상까지.', en: 'From everyday meals\nto little moments of joy.' },
           { key: 'coreBody', label: '본문', type: 'textarea', size: '0.95rem', ko: '과학과 신뢰로 만든 부명의 대표 펫 케어 브랜드와 엄선된 베스트셀러 제품 라인업입니다.', en: 'Specialized pet care brands and verified bestseller lineup built on science and trust.' },
         ],
       },
@@ -83,9 +83,9 @@ export const PAGE_SCHEMA = {
       {
         label: '상단 배너',
         fields: [
-          { key: 'heroImage', label: '배경 사진', type: 'image', width: 2560, height: 1440, src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2560&q=80' },
-          { key: 'heroEyebrow', label: '작은 영문 라벨', type: 'text', size: '0.82rem', koOnly: true, ko: 'ABOUT BOOMYOUNG' },
-          { key: 'heroTitle', label: '페이지 제목', type: 'textarea', size: '2.5rem', ko: '반려동물과 반려인의 행복한 내일을 열어갑니다', en: 'Opening a Healthier Tomorrow for Pets' },
+          { key: 'heroImage', label: '배경 사진', type: 'image', width: 2560, height: 1440, src: './assets/renewal/about-hero.jpg' },
+          { key: 'heroEyebrow', label: '작은 영문 라벨', type: 'text', size: '0.82rem', koOnly: true, ko: 'ABOUT BOOMYUNG' },
+          { key: 'heroTitle', label: '페이지 제목', type: 'textarea', size: '2.5rem', ko: '더 좋은 일상은,\n존중에서 시작됩니다.', en: 'A better everyday\nbegins with respect.' },
           { key: 'heroBody', label: '본문', type: 'textarea', size: '1.05rem', ko: '30년 이상 축적된 정직한 기술과 원칙 있는 품질, 견고한 신뢰를 바탕으로 펫 헬스케어의 미래를 창조합니다.', en: 'Built upon 30 years of honest technology, uncompromising safety protocols, and enduring customer trust.' },
         ],
       },
@@ -93,12 +93,12 @@ export const PAGE_SCHEMA = {
         label: 'CEO 메시지',
         fields: [
           { key: 'ceoEyebrow', label: '작은 영문 라벨', type: 'text', size: '0.78rem', koOnly: true, ko: 'CEO Message' },
-          { key: 'ceoSectionTitle', label: '섹션 제목', type: 'textarea', size: '1.8rem', ko: '생명을 존중하는 마음에서 기술이 시작됩니다', en: 'Dreaming of a World Where Pets Thrive' },
+          { key: 'ceoSectionTitle', label: '섹션 제목', type: 'textarea', size: '1.8rem', ko: '생명을 존중하는 마음에서\n기술이 시작됩니다', en: 'Dreaming of a World Where Pets Thrive' },
           { key: 'ceoSectionBody', label: '섹션 소개', type: 'textarea', size: '0.95rem', ko: '(주)부명이 추구하는 진정한 가치와 정직한 약속을 전합니다.', en: "A warm message of dedication and integrity from CEO Seong-hoon Jeong." },
           { key: 'ceoHighlight', label: '왼쪽 카드 인용구', type: 'textarea', size: '1.4rem', ko: '존중은 아주 작고 사소한 배려에서부터 시작됩니다.', en: 'Respect begins with small and thoughtful care.' },
           { key: 'ceoName', label: '대표 이름', type: 'text', size: '0.95rem', ko: '정 성 훈', en: 'Seong-hoon Jeong' },
-          { key: 'ceoTitleText', label: '대표 직함', type: 'text', size: '0.85rem', ko: '(주)부명 대표이사', en: 'CEO, BOOMYOUNG CO., LTD.' },
-          { key: 'ceoLead', label: '인사말 첫 문장', type: 'textarea', size: '1.2rem', ko: '안녕하십니까. (주)부명 대표이사 정성훈입니다.', en: 'Hello, I am Seong-hoon Jeong, CEO of BOOMYOUNG CO., LTD.' },
+          { key: 'ceoTitleText', label: '대표 직함', type: 'text', size: '0.85rem', ko: '(주)부명 대표이사', en: 'CEO, BOOMYUNG CO., LTD.' },
+          { key: 'ceoLead', label: '인사말 첫 문장', type: 'textarea', size: '1.2rem', ko: '안녕하십니까. (주)부명 대표이사 정성훈입니다.', en: 'Hello, I am Seong-hoon Jeong, CEO of BOOMYUNG CO., LTD.' },
           { key: 'ceoBody', label: '인사말 본문 — 빈 줄로 문단을 나눕니다', type: 'textarea', size: '0.96rem', ko: '부명은 반려동물과 반려인 모두에게 최상의 품질과 신뢰를 전한다는 확고한 신념 아래, 상품 기획부터 과학적인 R&D, 전문 제조 시설, 그리고 전국 물류 네트워크에 이르기까지 펫 라이프의 전 과정을 아우르는 종합 펫 헬스케어 기업으로 성장해 왔습니다.\n\n급변하는 반려동물 시장의 트렌드와 반려 가족의 목소리를 면밀히 분석하여 안심하고 선택할 수 있는 정직한 제품을 선보이고 있으며, 이마트, GS, 농협 등 국내 최고의 유통 파트너사들과의 두터운 신뢰를 바탕으로 지속 가능한 혁신을 이어가고 있습니다.\n\n앞으로도 협력 매장과 소비자 모두가 깊이 공감하고 신뢰할 수 있는 상생 경영을 지향하며, 엄격한 품질 관리와 차별화된 제조 역량으로 반려동물의 건강하고 행복한 삶을 지키는 든든한 동반자가 되겠습니다. 감사합니다.', en: 'Under the conviction of providing the highest quality products and heartfelt services to both companion animals and their guardians, BOOMYUNG has grown into a comprehensive enterprise covering product planning, scientific R&D, advanced manufacturing, and nationwide logistics.\n\nWe continuously examine fast-evolving market trends and guardians’ genuine needs to introduce nutritious, reliable products. Through enduring partnerships with leading domestic retail channels such as E-mart, GS, and NongHyup, we have built sustainable momentum.\n\nWe pledge to uphold management that satisfies both retail partners and end consumers, fortifying market leadership through relentless innovation and unwavering respect for pet life. Thank you.' },
         ],
       },

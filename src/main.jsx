@@ -6,8 +6,11 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { DataProvider } from './context/DataContext'
-import './index.css'
-import App from './App.jsx'
+import './renewal/renewal.css'
+import App from './renewal/RenewalApp.jsx'
+
+// Route anchors and scroll scenes own their initial position, including reloads.
+if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
 
 // HashRouter: 주소가 #/about 처럼 # 기반으로 동작 (정적 호스팅에서도 새로고침 시 404가 나지 않도록)
 // LanguageProvider: 한국어/영어 다국어 상태 제공
