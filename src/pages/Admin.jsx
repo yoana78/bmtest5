@@ -923,7 +923,8 @@ export default function Admin() {
           )}
 
           {/* SECTION: "브랜드 관리" / "제품 관리" 탭 전환 버튼 */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '36px', borderBottom: '2px solid #E5E7EB', paddingBottom: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '36px', borderBottom: '2px solid #E5E7EB', paddingBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setActiveTab('brand')}
               style={{
@@ -1004,6 +1005,8 @@ export default function Admin() {
             >
               5. {isEn ? 'Security' : '보안'}
             </button>
+          </div>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <button
               onClick={() => {
                 if (window.confirm(isEn ? 'Reset all custom added data?' : '추가한 데이터를 초기화하시겠습니까?')) {
@@ -1013,7 +1016,6 @@ export default function Admin() {
                 }
               }}
               style={{
-                marginLeft: 'auto',
                 padding: '7px 11px',
                 fontSize: '0.75rem',
                 fontWeight: '600',
@@ -1047,6 +1049,7 @@ export default function Admin() {
             >
               ↩️ {isEn ? 'Undo Reset' : '초기화 되돌리기'}
             </button>
+          </div>
           </div>
 
           {/* SECTION: [브랜드 탭] 신규 브랜드 등록 폼 */}
