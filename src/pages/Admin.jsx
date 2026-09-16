@@ -263,6 +263,58 @@ export default function Admin() {
     }
   };
 
+
+  // "문구·이미지 초기화" — 되돌아가는 범위를 정확히 알려주고, 실수로 누르는 일이 없도록
+  // "초기화"를 직접 입력해야 진행된다. 브랜드·제품은 이 버튼으로 절대 지워지지 않는다.
+  const handleResetPageContent = () => {
+    const warn = isEn
+      ? [
+          'Reset page text and images to their defaults?',
+          '',
+          '[Will be reset]',
+          '  - Every text and photo edited under "Page Text / Images"',
+          '  - Home hero images, vision background, inquiry email',
+          '',
+          '[Not touched]',
+          '  - ' + brands.length + ' brands and ' + products.length + ' products (never deleted)',
+          '  - Uploaded image files, admin password',
+          '',
+          'Type RESET to continue.',
+        ].join(String.fromCharCode(10))
+      : [
+          '페이지 문구와 이미지를 기본값으로 되돌립니다.',
+          '',
+          '[되돌아가는 것]',
+          '  · "페이지 문구·이미지"에서 수정한 모든 문구와 사진',
+          '  · 홈 히어로 이미지, 비전 배경 사진, 문의 수신 이메일',
+          '',
+          '[영향 없는 것]',
+          '  · 브랜드 ' + brands.length + '개, 제품 ' + products.length + '개 (삭제되지 않습니다)',
+          '  · 업로드한 이미지 파일, 관리자 비밀번호',
+          '',
+          '계속하려면 아래에 "초기화" 라고 입력하세요.',
+        ].join(String.fromCharCode(10));
+    const answer = window.prompt(warn, '');
+    if (answer === null) return;
+    if (answer.trim() !== (isEn ? 'RESET' : '초기화')) {
+      alert(isEn ? 'Cancelled - the text did not match.' : '입력한 내용이 달라서 취소되었습니다.');
+      return;
+    }
+    resetData()
+      .then(() => alert(isEn ? 'Page text and images were reset.' : '페이지 문구·이미지가 기본값으로 되돌아갔습니다.'))
+      .catch(() => alert(isEn ? 'Failed to reset.' : '초기화에 실패했습니다.'));
+  };
+
+  const handleUndoResetPageContent = () => {
+    const msg = isEn
+      ? 'Restore the page text and images from just before the last reset? Brands and products are not affected.'
+      : '가장 최근 초기화 직전의 문구·이미지 설정으로 되돌리시겠습니까? (브랜드·제품에는 영향이 없습니다.)';
+    if (!window.confirm(msg)) return;
+    undoReset()
+      .then(() => alert(isEn ? 'Restored.' : '이전 문구·이미지 설정으로 복원되었습니다.'))
+      .catch((err) => alert(err.message || (isEn ? 'Undo failed.' : '되돌리기에 실패했습니다.')));
+  };
+
   const [activeTab, setActiveTab] = useState('brand');
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -1035,13 +1087,7 @@ export default function Admin() {
               5. {isEn ? 'Security' : '보안'}
             </button>
             <button
-              onClick={() => {
-                if (window.confirm(isEn ? 'Reset all custom added data?' : '추가한 데이터를 초기화하시겠습니까?')) {
-                  resetData()
-                    .then(() => alert(isEn ? 'Data reset.' : '기본 데이터로 초기화되었습니다.'))
-                    .catch(() => alert(isEn ? 'Failed to reset.' : '초기화에 실패했습니다.'));
-                }
-              }}
+              onClick={handleResetPageContent}
               style={{
                 marginLeft: 'auto',
                 padding: '6px 8px',
@@ -1054,16 +1100,10 @@ export default function Admin() {
                 color: '#DC2626'
               }}
             >
-              🔄 {isEn ? 'Reset Data' : '데이터 초기화'}
+              🔄 {isEn ? 'Reset Text & Images' : '문구·이미지 초기화'}
             </button>
             <button
-              onClick={() => {
-                if (window.confirm(isEn ? 'Undo the last reset and restore the previous data?' : '가장 최근 초기화를 취소하고 이전 데이터로 되돌리시겠습니까?')) {
-                  undoReset()
-                    .then(() => alert(isEn ? 'Restored previous data.' : '이전 데이터로 복원되었습니다.'))
-                    .catch((err) => alert(err.message || (isEn ? 'Undo failed.' : '되돌리기에 실패했습니다.')));
-                }
-              }}
+              onClick={handleUndoResetPageContent}
               style={{
                 padding: '6px 8px',
                 fontSize: '0.7rem',
