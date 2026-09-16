@@ -1,8 +1,9 @@
 // 이 파일은 브랜드/제품/사이트설정 데이터를 관리하는 Context입니다.
 // 예전에는 브라우저 localStorage에만 저장했지만, 이제는 Cloudflare Pages Functions + D1 데이터베이스를
 // 통해 서버에 저장합니다 — 그래서 관리자가 한 번 수정하면 그 내용이 "모든 방문자"에게 똑같이 보입니다.
-// 관리자 페이지(Admin.jsx)에서 로그인에 성공하면 비밀번호를 sessionStorage에 토큰으로 저장해두고,
-// 이후 쓰기(추가/수정/삭제) 요청마다 그 토큰을 Authorization 헤더로 실어 서버에 인증합니다.
+// 관리자 페이지(Admin.jsx)에서 로그인에 성공하면 서버가 HttpOnly 쿠키로 세션을 내려주고,
+// 이후 쓰기(추가/수정/삭제) 요청은 브라우저가 그 쿠키를 자동으로 실어 보내 인증됩니다
+// (비밀번호 자체는 브라우저 어디에도 저장되지 않습니다).
 // Brands.jsx, Catalog.jsx, BrandDetail.jsx, ProductDetail.jsx 등 여러 페이지가 useData()로 이 데이터를 읽어갑니다.
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { brands as initialBrands } from '../data/brands';
@@ -10,18 +11,15 @@ import { products as initialProducts } from '../data/products';
 
 const DataContext = createContext();
 
-const ADMIN_TOKEN_KEY = 'boomyung_admin_token';
-
 const defaultSiteSettings = {
   contactEmail: 'help@petsb2b.co.kr',
   heroImages: [],
   visionImage: ''
 };
 
-// 관리자 로그인 후 저장해둔 토큰(비밀번호)을 꺼내 인증 헤더를 만든다 — Admin.jsx의 handlePasswordSubmit에서 저장함
+// 세션 쿠키는 same-origin 요청에 브라우저가 알아서 실어 보내므로 별도 토큰이 필요 없다.
 function authHeaders() {
-  const token = sessionStorage.getItem(ADMIN_TOKEN_KEY) || '';
-  return { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
+  return { 'Content-Type': 'application/json' };
 }
 
 export function DataProvider({ children }) {
@@ -110,6 +108,16 @@ export function DataProvider({ children }) {
     setSiteSettings(data.siteSettings);
   };
 
+  // 관리자 페이지의 "초기화 되돌리기" 버튼에서 사용 — 가장 최근 초기화 직전 상태로 복원
+  const undoReset = async () => {
+    const res = await fetch('/api/reset/undo', { method: 'POST', headers: authHeaders() });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || '되돌리기 실패');
+    const data = await fetch('/api/data').then(r => r.json());
+    setBrands(data.brands);
+    setProducts(data.products);
+    setSiteSettings(data.siteSettings);
+  };
+
   // 문의 수신 이메일 등 일반 설정값을 부분적으로 덮어씀
   const updateSiteSettings = async (updates) => {
     const res = await fetch('/api/settings', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(updates) });
@@ -147,7 +155,7 @@ export function DataProvider({ children }) {
 
   return (
     <DataContext.Provider value={{
-      brands, products, addBrand, deleteBrand, updateBrand, moveBrand, addProduct, deleteProduct, updateProduct, resetData,
+      brands, products, addBrand, deleteBrand, updateBrand, moveBrand, addProduct, deleteProduct, updateProduct, resetData, undoReset,
       siteSettings, updateSiteSettings, addHeroImage, removeHeroImage, moveHeroImage, uploadImage
     }}>
       {children}

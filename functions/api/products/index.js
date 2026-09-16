@@ -2,7 +2,7 @@ import { requireAdmin } from '../../_auth.js';
 
 // POST /api/products — 신규 제품 등록 (관리자 전용)
 export async function onRequestPost(context) {
-  const unauthorized = requireAdmin(context);
+  const unauthorized = await requireAdmin(context);
   if (unauthorized) return unauthorized;
 
   const product = await context.request.json();

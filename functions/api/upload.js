@@ -6,7 +6,7 @@ import { requireAdmin } from '../_auth.js';
 // (D1은 행 하나에 1MB 제한이 있으므로 이 폴백은 임시용 — R2 연결 후에는 새 업로드부터 자동으로 R2를 씀).
 // 응답: { url: "/api/images/<id>" } — 이 주소로 GET하면 이미지가 그대로 내려온다.
 export async function onRequestPost(context) {
-  const unauthorized = requireAdmin(context);
+  const unauthorized = await requireAdmin(context);
   if (unauthorized) return unauthorized;
 
   const { env } = context;

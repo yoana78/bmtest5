@@ -2,14 +2,12 @@
 // 비밀번호 입력 화면을 통과하면 브랜드/제품을 추가·수정·삭제할 수 있는 관리자 콘솔이 나타납니다.
 // 여기서 저장한 내용은 DataContext를 통해 서버(Cloudflare D1)에 저장되며, 모든 방문자에게 똑같이 보입니다.
 // Brands/Catalog 등 다른 페이지에 바로 반영됩니다.
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import PageContentEditor from './PageContentEditor';
 import { LIST_DEFAULTS } from '../content/siteLists';
 import { EXPO_PHOTO_SIZE } from '../content/expoData';
-
-const ADMIN_TOKEN_KEY = 'boomyung_admin_token';
 
 // 이미지를 캔버스로 다시 그려서 축소/압축한 dataURL을 만듦.
 // R2(전용 이미지 저장소) 없이 데이터베이스(D1)에 이미지를 직접 저장하기 때문에 한 장당 용량 제한(약 900KB)이 있음 —
@@ -154,7 +152,7 @@ export default function Admin() {
   const { lang } = useLanguage();
   const isEn = lang === 'en';
   const {
-    brands, products, addBrand, deleteBrand, updateBrand, moveBrand, addProduct, deleteProduct, updateProduct, resetData,
+    brands, products, addBrand, deleteBrand, updateBrand, moveBrand, addProduct, deleteProduct, updateProduct, resetData, undoReset,
     siteSettings, updateSiteSettings, addHeroImage, removeHeroImage, moveHeroImage, uploadImage
   } = useData();
   const [settingsEmail, setSettingsEmail] = useState(siteSettings.contactEmail);
@@ -187,6 +185,14 @@ export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  // 이전에 로그인한 세션 쿠키가 아직 유효하면(24시간 이내) 비밀번호를 다시 묻지 않는다.
+  useEffect(() => {
+    fetch('/api/session')
+      .then(res => res.json())
+      .then(data => { if (data.authenticated) setIsAuthenticated(true); })
+      .catch(() => {});
+  }, []);
 
   const [activeTab, setActiveTab] = useState('brand');
   const [successMsg, setSuccessMsg] = useState('');
@@ -314,10 +320,9 @@ export default function Admin() {
   const translateText = async (text) => {
     if (!text || !text.trim()) return '';
     try {
-      const token = sessionStorage.getItem(ADMIN_TOKEN_KEY) || '';
       const res = await fetch('/api/translate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })
       });
       if (!res.ok) return '';
@@ -351,15 +356,24 @@ export default function Admin() {
     return Object.fromEntries(filled);
   };
 
-  // 비밀번호 확인 (서버에 저장된 값과 비교, 맞으면 로그인 처리하고 이후 요청에 쓸 토큰을 저장)
-  const handlePasswordSubmit = (e) => {
+  // 비밀번호 확인 — 서버(/api/login)가 실제 값을 검증하고, 맞으면 HttpOnly 세션 쿠키를 내려준다.
+  // 비밀번호는 프론트엔드 코드 어디에도 남지 않는다.
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    if (passwordInput === '3051') {
-      sessionStorage.setItem(ADMIN_TOKEN_KEY, passwordInput);
-      setIsAuthenticated(true);
-      setPasswordError('');
-    } else {
-      setPasswordError(isEn ? 'Incorrect password.' : '비밀번호가 일치하지 않습니다.');
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput })
+      });
+      if (res.ok) {
+        setIsAuthenticated(true);
+        setPasswordError('');
+      } else {
+        setPasswordError(isEn ? 'Incorrect password.' : '비밀번호가 일치하지 않습니다.');
+      }
+    } catch {
+      setPasswordError(isEn ? 'Login failed. Please try again.' : '로그인에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
@@ -815,6 +829,18 @@ export default function Admin() {
       <section className="daesang-white-section" style={{ padding: '60px 0 100px' }}>
         <div className="daesang-container" style={{ maxWidth: '900px', margin: '0 auto', padding: '0 20px' }}>
           
+          {/* SECTION: 로그아웃 */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+            <button
+              onClick={() => {
+                fetch('/api/logout', { method: 'POST' }).finally(() => setIsAuthenticated(false));
+              }}
+              style={{ background: 'none', border: 'none', color: '#6B7280', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              {isEn ? 'Log out' : '로그아웃'}
+            </button>
+          </div>
+
           {/* SECTION: 작업 완료(추가/삭제/수정) 알림 배너 */}
           {successMsg && (
             <div style={{ padding: '16px 24px', backgroundColor: '#E0F2FE', color: '#0369A1', borderRadius: '8px', border: '1px solid #BAE6FD', marginBottom: '30px', fontWeight: '600', fontSize: '1rem' }}>
@@ -909,6 +935,27 @@ export default function Admin() {
               }}
             >
               🔄 {isEn ? 'Reset Data' : '데이터 초기화'}
+            </button>
+            <button
+              onClick={() => {
+                if (window.confirm(isEn ? 'Undo the last reset and restore the previous data?' : '가장 최근 초기화를 취소하고 이전 데이터로 되돌리시겠습니까?')) {
+                  undoReset()
+                    .then(() => alert(isEn ? 'Restored previous data.' : '이전 데이터로 복원되었습니다.'))
+                    .catch((err) => alert(err.message || (isEn ? 'Undo failed.' : '되돌리기에 실패했습니다.')));
+                }
+              }}
+              style={{
+                padding: '12px 18px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                border: '1px solid #BFDBFE',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                backgroundColor: '#EFF6FF',
+                color: '#1D4ED8'
+              }}
+            >
+              ↩️ {isEn ? 'Undo Reset' : '초기화 되돌리기'}
             </button>
           </div>
 
