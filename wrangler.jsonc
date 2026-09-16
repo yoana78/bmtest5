@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "bmtest5",
-  "pages_build_output_dir": "./",
+  "pages_build_output_dir": "dist",
   "compatibility_date": "2025-01-01",
   "d1_databases": [
     {
