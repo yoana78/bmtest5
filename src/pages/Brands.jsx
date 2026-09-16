@@ -26,7 +26,7 @@ export default function Brands({ initialFilter = 'all' }) {
         <Link to={`${brand.type === 'imported' ? '/imported-brands' : '/brands'}/${brand.id}`} aria-label={en ? `Explore ${brand.nameEn}` : `${brand.nameKo} 브랜드 보기`}>
           <div className="brand-directory-image" style={{backgroundColor:brand.color || '#e8ece8'}}>
             {(brand.bgImage || backgrounds.has(brand.id)) && <img className="brand-directory-photo" src={brand.bgImage || `./assets/renewal/brand-${brand.id}.jpg`} alt="" loading="lazy" onError={e=>{e.currentTarget.style.visibility='hidden';}}/>}
-            <div className="brand-directory-logo">{brand.logo ? <img src={brand.logo} alt={en ? brand.nameEn : brand.nameKo}/> : <strong>{en ? brand.nameEn : brand.nameKo}</strong>}</div>
+            <div className="brand-directory-logo">{brand.logo ? <img src={brand.logo} alt={en ? brand.nameEn : brand.nameKo} style={{ transform: `scale(${Number(brand.logoScale) || 1})` }}/> : <strong>{en ? brand.nameEn : brand.nameKo}</strong>}</div>
             <span className="brand-directory-open" aria-hidden="true">↗</span>
           </div>
           
