@@ -927,8 +927,8 @@ export default function Admin() {
             <button
               onClick={() => setActiveTab('brand')}
               style={{
-                padding: '12px 28px',
-                fontSize: '1.05rem',
+                padding: '8px 14px',
+                fontSize: '0.8rem',
                 fontWeight: '700',
                 border: 'none',
                 borderRadius: '6px',
@@ -943,8 +943,8 @@ export default function Admin() {
             <button
               onClick={() => setActiveTab('product')}
               style={{
-                padding: '12px 28px',
-                fontSize: '1.05rem',
+                padding: '8px 14px',
+                fontSize: '0.8rem',
                 fontWeight: '700',
                 border: 'none',
                 borderRadius: '6px',
@@ -959,8 +959,8 @@ export default function Admin() {
             <button
               onClick={() => setActiveTab('settings')}
               style={{
-                padding: '12px 28px',
-                fontSize: '1.05rem',
+                padding: '8px 14px',
+                fontSize: '0.8rem',
                 fontWeight: '700',
                 border: 'none',
                 borderRadius: '6px',
@@ -975,8 +975,8 @@ export default function Admin() {
             <button
               onClick={() => setActiveTab('pages')}
               style={{
-                padding: '12px 28px',
-                fontSize: '1.05rem',
+                padding: '8px 14px',
+                fontSize: '0.8rem',
                 fontWeight: '700',
                 border: 'none',
                 borderRadius: '6px',
@@ -991,8 +991,8 @@ export default function Admin() {
             <button
               onClick={() => setActiveTab('security')}
               style={{
-                padding: '12px 28px',
-                fontSize: '1.05rem',
+                padding: '8px 14px',
+                fontSize: '0.8rem',
                 fontWeight: '700',
                 border: 'none',
                 borderRadius: '6px',
@@ -1014,8 +1014,8 @@ export default function Admin() {
               }}
               style={{
                 marginLeft: 'auto',
-                padding: '12px 18px',
-                fontSize: '0.9rem',
+                padding: '7px 11px',
+                fontSize: '0.75rem',
                 fontWeight: '600',
                 border: '1px solid #FCA5A5',
                 borderRadius: '6px',
@@ -1035,8 +1035,8 @@ export default function Admin() {
                 }
               }}
               style={{
-                padding: '12px 18px',
-                fontSize: '0.9rem',
+                padding: '7px 11px',
+                fontSize: '0.75rem',
                 fontWeight: '600',
                 border: '1px solid #BFDBFE',
                 borderRadius: '6px',
@@ -1821,6 +1821,108 @@ export default function Admin() {
             </div>
           )}
 
+          {/* SECTION: [보안 탭] 비밀번호 변경 + 로그인/변경 이력(IP 포함) */}
+          {activeTab === 'security' && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
+              <form onSubmit={handleChangePassword} style={{ background: '#FFFFFF', padding: '36px', borderRadius: '12px', border: '1px solid #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', display: 'grid', gap: '16px' }}>
+                <h2 style={{ fontSize: '1.4rem', color: '#0A2540', marginBottom: '4px' }}>
+                  🔑 {isEn ? 'Change Admin Password' : '관리자 비밀번호 변경'}
+                </h2>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                    {isEn ? 'Current Password' : '현재 비밀번호'}
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={pwForm.current}
+                    onChange={e => setPwForm({ ...pwForm, current: e.target.value })}
+                    style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                    {isEn ? 'New Password' : '새 비밀번호'}
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={pwForm.next}
+                    onChange={e => setPwForm({ ...pwForm, next: e.target.value })}
+                    style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                    {isEn ? 'Confirm New Password' : '새 비밀번호 확인'}
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={pwForm.confirm}
+                    onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })}
+                    style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
+                  />
+                </div>
+                {pwError && <div style={{ color: '#DC2626', fontSize: '0.85rem', fontWeight: '600' }}>⚠️ {pwError}</div>}
+                {pwMsg && <div style={{ color: '#059669', fontSize: '0.85rem', fontWeight: '600' }}>✓ {pwMsg}</div>}
+                <button
+                  type="submit"
+                  style={{ justifySelf: 'start', padding: '12px 24px', backgroundColor: '#0066B3', color: '#FFFFFF', fontSize: '1rem', fontWeight: '700', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                >
+                  💾 {isEn ? 'Change Password' : '비밀번호 변경'}
+                </button>
+              </form>
+
+              <div style={{ background: '#FFFFFF', padding: '36px', borderRadius: '12px', border: '1px solid #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <h2 style={{ fontSize: '1.4rem', color: '#0A2540', margin: 0 }}>
+                    🕵️ {isEn ? 'Login & Change History' : '로그인·변경 이력'}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={loadAuditLogs}
+                    style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: '600', border: '1px solid #D1D5DB', borderRadius: '6px', cursor: 'pointer', backgroundColor: '#F9FAFB', color: '#374151' }}
+                  >
+                    🔄 {isEn ? 'Refresh' : '새로고침'}
+                  </button>
+                </div>
+                {auditLoading ? (
+                  <p style={{ color: '#6B7280', fontSize: '0.9rem' }}>{isEn ? 'Loading...' : '불러오는 중...'}</p>
+                ) : auditLogs.length === 0 ? (
+                  <p style={{ color: '#6B7280', fontSize: '0.9rem' }}>{isEn ? 'No history yet.' : '아직 기록이 없습니다.'}</p>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '2px solid #E5E7EB', textAlign: 'left' }}>
+                          <th style={{ padding: '8px 12px' }}>{isEn ? 'Time' : '시각'}</th>
+                          <th style={{ padding: '8px 12px' }}>{isEn ? 'IP Address' : 'IP 주소'}</th>
+                          <th style={{ padding: '8px 12px' }}>{isEn ? 'Action' : '동작'}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {auditLogs.map((log, i) => (
+                          <tr key={i} style={{ borderBottom: '1px solid #F3F4F6' }}>
+                            <td style={{ padding: '8px 12px', color: '#374151', whiteSpace: 'nowrap' }}>{log.created_at}</td>
+                            <td style={{ padding: '8px 12px', color: '#374151', fontFamily: 'monospace' }}>{log.ip}</td>
+                            <td style={{ padding: '8px 12px', color: '#374151' }}>
+                              {{ login_success: isEn ? 'Login success' : '로그인 성공',
+                                 login_fail: isEn ? 'Login failed' : '로그인 실패',
+                                 password_change: isEn ? 'Password changed' : '비밀번호 변경',
+                                 reset: isEn ? 'Data reset' : '데이터 초기화',
+                                 reset_undo: isEn ? 'Reset undone' : '초기화 되돌림' }[log.action] || log.action}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       </section>
 
@@ -2301,107 +2403,6 @@ export default function Admin() {
         </div>
       )}
 
-      {/* SECTION: [보안 탭] 비밀번호 변경 + 로그인/변경 이력(IP 포함) */}
-      {activeTab === 'security' && (
-        <div style={{ display: 'grid', gap: '24px' }}>
-          <form onSubmit={handleChangePassword} style={{ background: '#FFFFFF', padding: '36px', borderRadius: '12px', border: '1px solid #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', display: 'grid', gap: '16px', maxWidth: '440px' }}>
-            <h2 style={{ fontSize: '1.4rem', color: '#0A2540', marginBottom: '4px' }}>
-              🔑 {isEn ? 'Change Admin Password' : '관리자 비밀번호 변경'}
-            </h2>
-            <div>
-              <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
-                {isEn ? 'Current Password' : '현재 비밀번호'}
-              </label>
-              <input
-                type="password"
-                required
-                value={pwForm.current}
-                onChange={e => setPwForm({ ...pwForm, current: e.target.value })}
-                style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
-                {isEn ? 'New Password' : '새 비밀번호'}
-              </label>
-              <input
-                type="password"
-                required
-                value={pwForm.next}
-                onChange={e => setPwForm({ ...pwForm, next: e.target.value })}
-                style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
-                {isEn ? 'Confirm New Password' : '새 비밀번호 확인'}
-              </label>
-              <input
-                type="password"
-                required
-                value={pwForm.confirm}
-                onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })}
-                style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
-              />
-            </div>
-            {pwError && <div style={{ color: '#DC2626', fontSize: '0.85rem', fontWeight: '600' }}>⚠️ {pwError}</div>}
-            {pwMsg && <div style={{ color: '#059669', fontSize: '0.85rem', fontWeight: '600' }}>✓ {pwMsg}</div>}
-            <button
-              type="submit"
-              style={{ justifySelf: 'start', padding: '12px 24px', backgroundColor: '#0066B3', color: '#FFFFFF', fontSize: '1rem', fontWeight: '700', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
-            >
-              💾 {isEn ? 'Change Password' : '비밀번호 변경'}
-            </button>
-          </form>
-
-          <div style={{ background: '#FFFFFF', padding: '36px', borderRadius: '12px', border: '1px solid #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '1.4rem', color: '#0A2540', margin: 0 }}>
-                🕵️ {isEn ? 'Login & Change History' : '로그인·변경 이력'}
-              </h2>
-              <button
-                type="button"
-                onClick={loadAuditLogs}
-                style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: '600', border: '1px solid #D1D5DB', borderRadius: '6px', cursor: 'pointer', backgroundColor: '#F9FAFB', color: '#374151' }}
-              >
-                🔄 {isEn ? 'Refresh' : '새로고침'}
-              </button>
-            </div>
-            {auditLoading ? (
-              <p style={{ color: '#6B7280', fontSize: '0.9rem' }}>{isEn ? 'Loading...' : '불러오는 중...'}</p>
-            ) : auditLogs.length === 0 ? (
-              <p style={{ color: '#6B7280', fontSize: '0.9rem' }}>{isEn ? 'No history yet.' : '아직 기록이 없습니다.'}</p>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '2px solid #E5E7EB', textAlign: 'left' }}>
-                      <th style={{ padding: '8px 12px' }}>{isEn ? 'Time' : '시각'}</th>
-                      <th style={{ padding: '8px 12px' }}>{isEn ? 'IP Address' : 'IP 주소'}</th>
-                      <th style={{ padding: '8px 12px' }}>{isEn ? 'Action' : '동작'}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {auditLogs.map((log, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                        <td style={{ padding: '8px 12px', color: '#374151', whiteSpace: 'nowrap' }}>{log.created_at}</td>
-                        <td style={{ padding: '8px 12px', color: '#374151', fontFamily: 'monospace' }}>{log.ip}</td>
-                        <td style={{ padding: '8px 12px', color: '#374151' }}>
-                          {{ login_success: isEn ? 'Login success' : '로그인 성공',
-                             login_fail: isEn ? 'Login failed' : '로그인 실패',
-                             password_change: isEn ? 'Password changed' : '비밀번호 변경',
-                             reset: isEn ? 'Data reset' : '데이터 초기화',
-                             reset_undo: isEn ? 'Reset undone' : '초기화 되돌림' }[log.action] || log.action}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
