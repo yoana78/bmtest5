@@ -12,11 +12,17 @@ export async function onRequestPut(context) {
   if (!existing) return Response.json({ error: 'Not found' }, { status: 404 });
 
   const parsedExisting = JSON.parse(existing.data);
-  // 기존 브랜드 객체에 이미 있는 필드만 덮어쓸 수 있게 제한한다 — 클라이언트가
-  // 임의의 새 필드를 끼워넣어 저장하는 것을 막기 위함.
+  // 브랜드 스키마에 정의된 필드만 덮어쓸 수 있게 제한한다 — 클라이언트가 임의의 새
+  // 필드를 끼워넣어 저장하는 것을 막기 위함. 기존 레코드에 아직 없는 필드(예: 나중에
+  // 추가된 bgImage)라도 스키마에 정의되어 있으면 처음으로 채워 넣을 수 있어야 하므로,
+  // "기존에 있던 키"뿐 아니라 이 목록에 있는 키도 함께 허용한다.
+  const BRAND_SCHEMA_FIELDS = new Set([
+    'nameKo', 'nameEn', 'tagline', 'taglineEn', 'logo', 'hasLogo', 'logoScale',
+    'bgImage', 'descriptionKo', 'descriptionEn', 'categories', 'color', 'type'
+  ]);
   const allowedUpdates = {};
   for (const key of Object.keys(updates)) {
-    if (key in parsedExisting) allowedUpdates[key] = updates[key];
+    if (key in parsedExisting || BRAND_SCHEMA_FIELDS.has(key)) allowedUpdates[key] = updates[key];
   }
   const merged = { ...parsedExisting, ...allowedUpdates };
   if (position !== undefined) {

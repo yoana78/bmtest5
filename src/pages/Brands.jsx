@@ -25,7 +25,9 @@ export default function Brands({ initialFilter = 'all' }) {
       {visible.map(brand => <article className="brand-directory-item" key={brand.id}>
         <Link to={`${brand.type === 'imported' ? '/imported-brands' : '/brands'}/${brand.id}`} aria-label={en ? `Explore ${brand.nameEn}` : `${brand.nameKo} 브랜드 보기`}>
           <div className="brand-directory-image" style={{backgroundColor:brand.color || '#e8ece8'}}>
-            {backgrounds.has(brand.id) && <img className="brand-directory-photo" src={`./assets/renewal/brand-${brand.id}.jpg`} alt="" loading="lazy"/>}
+            {brand.bgImage
+              ? <img className="brand-directory-photo" src={brand.bgImage} alt="" loading="lazy"/>
+              : backgrounds.has(brand.id) && <img className="brand-directory-photo" src={`./assets/renewal/brand-${brand.id}.jpg`} alt="" loading="lazy"/>}
             <div className="brand-directory-logo">{brand.logo ? <img src={brand.logo} alt={en ? brand.nameEn : brand.nameKo}/> : <strong>{en ? brand.nameEn : brand.nameKo}</strong>}</div>
             <span className="brand-directory-open" aria-hidden="true">↗</span>
           </div>
