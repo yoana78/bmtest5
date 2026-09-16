@@ -847,7 +847,7 @@ export default function Admin() {
     return (
       <div className="daesang-sub-page">
         {/* SECTION: 관리자 로그인 화면 - 비밀번호 입력 */}
-        <section className="daesang-sub-hero" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2560&q=80')" }}>
+        <section className="daesang-sub-hero" style={{ backgroundImage: "url('./assets/stock/unsplash-1454165804606-c3d57bc86b40.jpg')" }}>
           <div className="daesang-section-overlay"></div>
           <div className="daesang-sub-hero-content">
             <span className="daesang-poetic-sub">ADMINISTRATION</span>
@@ -921,7 +921,7 @@ export default function Admin() {
   return (
     <div className="daesang-sub-page">
       {/* SECTION: 관리자 페이지 상단 히어로 배너 */}
-      <section className="daesang-sub-hero" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2560&q=80')" }}>
+      <section className="daesang-sub-hero" style={{ backgroundImage: "url('./assets/stock/unsplash-1454165804606-c3d57bc86b40.jpg')" }}>
         <div className="daesang-section-overlay"></div>
         <div className="daesang-sub-hero-content">
           <span className="daesang-poetic-sub">ADMINISTRATION</span>

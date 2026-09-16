@@ -239,7 +239,7 @@ export default function Catalog() {
       <section
         className="bm-sub-hero header-extended-hero"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=2560&q=80')"
+          backgroundImage: "url('./assets/stock/unsplash-1589924691995-400dc9ecc119.jpg')"
         }}
       >
         <div className="bm-sub-hero-overlay" />
