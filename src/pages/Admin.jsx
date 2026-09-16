@@ -186,7 +186,7 @@ export default function Admin() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  // 이전에 로그인한 세션 쿠키가 아직 유효하면(24시간 이내) 비밀번호를 다시 묻지 않는다.
+  // 이전에 로그인한 세션 쿠키가 아직 유효하면(4시간 이내) 비밀번호를 다시 묻지 않는다.
   useEffect(() => {
     fetch('/api/session')
       .then(res => res.json())
@@ -194,8 +194,82 @@ export default function Admin() {
       .catch(() => {});
   }, []);
 
+  // 은행 앱처럼, 15분 동안 마우스/키보드 조작이 없으면 자동으로 로그아웃한다.
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+    const IDLE_LIMIT_MS = 15 * 60 * 1000;
+    let idleTimer = setTimeout(autoLogout, IDLE_LIMIT_MS);
+    function autoLogout() {
+      fetch('/api/logout', { method: 'POST' }).finally(() => setIsAuthenticated(false));
+    }
+    function resetTimer() {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(autoLogout, IDLE_LIMIT_MS);
+    }
+    const events = ['mousemove', 'keydown', 'click', 'scroll'];
+    events.forEach(ev => window.addEventListener(ev, resetTimer));
+    return () => {
+      clearTimeout(idleTimer);
+      events.forEach(ev => window.removeEventListener(ev, resetTimer));
+    };
+  }, [isAuthenticated]);
+
+  // [보안 탭] 비밀번호 변경 폼 상태
+  const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
+  const [pwMsg, setPwMsg] = useState('');
+  const [pwError, setPwError] = useState('');
+
+  // [보안 탭] 최근 로그인/비밀번호 변경/초기화 이력 (IP 포함)
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [auditLoading, setAuditLoading] = useState(false);
+
+  const loadAuditLogs = () => {
+    setAuditLoading(true);
+    fetch('/api/audit-log')
+      .then(res => res.json())
+      .then(data => setAuditLogs(data.logs || []))
+      .catch(() => {})
+      .finally(() => setAuditLoading(false));
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPwMsg('');
+    setPwError('');
+    if (pwForm.next.length < 4) {
+      setPwError(isEn ? 'New password must be at least 4 characters.' : '새 비밀번호는 4자 이상이어야 합니다.');
+      return;
+    }
+    if (pwForm.next !== pwForm.confirm) {
+      setPwError(isEn ? 'New passwords do not match.' : '새 비밀번호가 서로 일치하지 않습니다.');
+      return;
+    }
+    try {
+      const res = await fetch('/api/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.next })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setPwError(data.error || (isEn ? 'Failed to change password.' : '비밀번호 변경에 실패했습니다.'));
+        return;
+      }
+      setPwMsg(isEn ? 'Password changed.' : '비밀번호가 변경되었습니다.');
+      setPwForm({ current: '', next: '', confirm: '' });
+      loadAuditLogs();
+    } catch {
+      setPwError(isEn ? 'Failed to change password.' : '비밀번호 변경에 실패했습니다.');
+    }
+  };
+
   const [activeTab, setActiveTab] = useState('brand');
   const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    if (activeTab === 'security') loadAuditLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   // 1. 브랜드 등록 폼 입력값
   const [brandForm, setBrandForm] = useState({
@@ -913,6 +987,22 @@ export default function Admin() {
               }}
             >
               4. {isEn ? 'Page Text / Images' : '페이지 문구·이미지'}
+            </button>
+            <button
+              onClick={() => setActiveTab('security')}
+              style={{
+                padding: '12px 28px',
+                fontSize: '1.05rem',
+                fontWeight: '700',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'security' ? '#0066B3' : '#F3F4F6',
+                color: activeTab === 'security' ? '#FFFFFF' : '#4B5563',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              5. {isEn ? 'Security' : '보안'}
             </button>
             <button
               onClick={() => {
@@ -2208,6 +2298,108 @@ export default function Admin() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* SECTION: [보안 탭] 비밀번호 변경 + 로그인/변경 이력(IP 포함) */}
+      {activeTab === 'security' && (
+        <div style={{ display: 'grid', gap: '24px' }}>
+          <form onSubmit={handleChangePassword} style={{ background: '#FFFFFF', padding: '36px', borderRadius: '12px', border: '1px solid #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', display: 'grid', gap: '16px', maxWidth: '440px' }}>
+            <h2 style={{ fontSize: '1.4rem', color: '#0A2540', marginBottom: '4px' }}>
+              🔑 {isEn ? 'Change Admin Password' : '관리자 비밀번호 변경'}
+            </h2>
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                {isEn ? 'Current Password' : '현재 비밀번호'}
+              </label>
+              <input
+                type="password"
+                required
+                value={pwForm.current}
+                onChange={e => setPwForm({ ...pwForm, current: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                {isEn ? 'New Password' : '새 비밀번호'}
+              </label>
+              <input
+                type="password"
+                required
+                value={pwForm.next}
+                onChange={e => setPwForm({ ...pwForm, next: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                {isEn ? 'Confirm New Password' : '새 비밀번호 확인'}
+              </label>
+              <input
+                type="password"
+                required
+                value={pwForm.confirm}
+                onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '1rem' }}
+              />
+            </div>
+            {pwError && <div style={{ color: '#DC2626', fontSize: '0.85rem', fontWeight: '600' }}>⚠️ {pwError}</div>}
+            {pwMsg && <div style={{ color: '#059669', fontSize: '0.85rem', fontWeight: '600' }}>✓ {pwMsg}</div>}
+            <button
+              type="submit"
+              style={{ justifySelf: 'start', padding: '12px 24px', backgroundColor: '#0066B3', color: '#FFFFFF', fontSize: '1rem', fontWeight: '700', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+            >
+              💾 {isEn ? 'Change Password' : '비밀번호 변경'}
+            </button>
+          </form>
+
+          <div style={{ background: '#FFFFFF', padding: '36px', borderRadius: '12px', border: '1px solid #E5E7EB', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.4rem', color: '#0A2540', margin: 0 }}>
+                🕵️ {isEn ? 'Login & Change History' : '로그인·변경 이력'}
+              </h2>
+              <button
+                type="button"
+                onClick={loadAuditLogs}
+                style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: '600', border: '1px solid #D1D5DB', borderRadius: '6px', cursor: 'pointer', backgroundColor: '#F9FAFB', color: '#374151' }}
+              >
+                🔄 {isEn ? 'Refresh' : '새로고침'}
+              </button>
+            </div>
+            {auditLoading ? (
+              <p style={{ color: '#6B7280', fontSize: '0.9rem' }}>{isEn ? 'Loading...' : '불러오는 중...'}</p>
+            ) : auditLogs.length === 0 ? (
+              <p style={{ color: '#6B7280', fontSize: '0.9rem' }}>{isEn ? 'No history yet.' : '아직 기록이 없습니다.'}</p>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '2px solid #E5E7EB', textAlign: 'left' }}>
+                      <th style={{ padding: '8px 12px' }}>{isEn ? 'Time' : '시각'}</th>
+                      <th style={{ padding: '8px 12px' }}>{isEn ? 'IP Address' : 'IP 주소'}</th>
+                      <th style={{ padding: '8px 12px' }}>{isEn ? 'Action' : '동작'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {auditLogs.map((log, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #F3F4F6' }}>
+                        <td style={{ padding: '8px 12px', color: '#374151', whiteSpace: 'nowrap' }}>{log.created_at}</td>
+                        <td style={{ padding: '8px 12px', color: '#374151', fontFamily: 'monospace' }}>{log.ip}</td>
+                        <td style={{ padding: '8px 12px', color: '#374151' }}>
+                          {{ login_success: isEn ? 'Login success' : '로그인 성공',
+                             login_fail: isEn ? 'Login failed' : '로그인 실패',
+                             password_change: isEn ? 'Password changed' : '비밀번호 변경',
+                             reset: isEn ? 'Data reset' : '데이터 초기화',
+                             reset_undo: isEn ? 'Reset undone' : '초기화 되돌림' }[log.action] || log.action}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

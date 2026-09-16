@@ -1,4 +1,4 @@
-import { requireAdmin } from '../../_auth.js';
+import { requireAdmin, logAdminAction } from '../../_auth.js';
 
 // POST /api/reset/undo — 가장 최근 초기화(reset) 직전 스냅샷으로 복원한다 (관리자 전용).
 export async function onRequestPost(context) {
@@ -35,6 +35,8 @@ export async function onRequestPost(context) {
       : []),
     env.DB.prepare('DELETE FROM reset_snapshots WHERE id = ?').bind(snap.id),
   ]);
+
+  await logAdminAction(context, 'reset_undo');
 
   return Response.json({ ok: true });
 }

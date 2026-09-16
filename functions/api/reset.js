@@ -1,4 +1,4 @@
-import { requireAdmin } from '../_auth.js';
+import { requireAdmin, logAdminAction } from '../_auth.js';
 import defaults from '../_defaults.json';
 
 // POST /api/reset — 모든 브랜드/제품/설정을 원본 기본값으로 되돌림 (관리자 전용)
@@ -51,6 +51,8 @@ export async function onRequestPost(context) {
     ),
     env.DB.prepare('INSERT INTO site_settings (key, data) VALUES (\'settings\', ?)').bind(JSON.stringify(defaults.siteSettings))
   ]);
+
+  await logAdminAction(context, 'reset');
 
   return Response.json({ ok: true });
 }
