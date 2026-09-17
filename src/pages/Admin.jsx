@@ -52,9 +52,12 @@ function compressImage(file, { maxDimension = 1600, startQuality = 0.85, maxBase
       // 여전히 너무 크면 품질을 낮추고, 품질을 최대로 낮췄는데도(또는 PNG라 품질 옵션이 없어서)
       // 여전히 크면 캔버스 크기 자체를 반복해서 줄인다 (가로로 긴 세로 인포그래픽처럼
       // 픽셀 수 자체가 많아 품질만으로는 용량이 안 줄어드는 경우 대비).
-      while (dataUrl.length > maxBase64Length && (quality > 0.3 || canvas.width > 300)) {
-        if (quality > 0.3) quality -= 0.1;
-        if (keepPng || quality <= 0.3) {
+      // 세로로 아주 긴 상세페이지 인포그래픽은 품질을 많이 낮춰도(0.15까지) 텍스트가 알아볼 수
+      // 있는 수준으로 남지만, 해상도(가로 폭)를 줄이면 글자가 급격히 흐려지므로 품질 하한을
+      // 훨씬 낮게 잡아 해상도를 최대한 오래 유지한다.
+      while (dataUrl.length > maxBase64Length && (quality > 0.15 || canvas.width > 300)) {
+        if (quality > 0.15) quality -= 0.05;
+        if (keepPng || quality <= 0.15) {
           canvas.width = Math.round(canvas.width * 0.85);
           canvas.height = Math.round(canvas.height * 0.85);
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
