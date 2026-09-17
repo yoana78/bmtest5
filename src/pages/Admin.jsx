@@ -73,6 +73,91 @@ function compressImage(file, { maxDimension = 1600, startQuality = 0.85, maxBase
   });
 }
 
+// 테두리(모서리)에서부터 흰색 계열 픽셀을 안쪽으로 연결해서(flood fill) 투명 처리한다.
+// 이미지 전체에서 흰 픽셀을 다 지우는 게 아니라 "테두리와 연결된" 흰 배경만 지우기 때문에,
+// 로고 글자처럼 피사체 안에 있는 흰색은 지워지지 않는다.
+// 반환하는 bgFraction이 아주 작으면(예: 박스 사진처럼 프레임을 꽉 채운 경우) 지울 배경이
+// 사실상 없다는 뜻이므로, 호출부에서 투명 PNG 대신 원래의 JPEG 압축으로 되돌린다.
+function floodFillWhiteBackground(canvas, ctx, { threshold = 235 } = {}) {
+  const { width, height } = canvas;
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  const isBg = (idx) => data[idx] >= threshold && data[idx + 1] >= threshold && data[idx + 2] >= threshold;
+  const visited = new Uint8Array(width * height);
+  const stack = [];
+
+  const pushIfBg = (x, y) => {
+    if (x < 0 || x >= width || y < 0 || y >= height) return;
+    const p = y * width + x;
+    if (visited[p]) return;
+    if (!isBg(p * 4)) return;
+    visited[p] = 1;
+    stack.push(p);
+  };
+
+  for (let x = 0; x < width; x++) { pushIfBg(x, 0); pushIfBg(x, height - 1); }
+  for (let y = 0; y < height; y++) { pushIfBg(0, y); pushIfBg(width - 1, y); }
+
+  let removedCount = 0;
+  while (stack.length) {
+    const p = stack.pop();
+    const x = p % width, y = (p / width) | 0;
+    data[p * 4 + 3] = 0;
+    removedCount++;
+    pushIfBg(x + 1, y);
+    pushIfBg(x - 1, y);
+    pushIfBg(x, y + 1);
+    pushIfBg(x, y - 1);
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return removedCount / (width * height);
+}
+
+// 제품 "대표 이미지"는 항상 흰 배경을 투명으로 지운 PNG로 저장한다 (JPEG로 올려도 자동 변환).
+// PNG는 화질(quality) 옵션이 없어서 용량 제한에 걸리면 해상도 자체를 줄여야 하므로,
+// 압축 JPEG보다 이 경로의 최종 해상도가 더 낮아질 수 있다.
+function compressProductImage(file, { maxDimension = 1600, maxBase64Length = 850000, minBgFraction = 0.03 } = {}) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let { width, height } = img;
+      const longSide = Math.max(width, height);
+      if (longSide > maxDimension) {
+        const scale = maxDimension / longSide;
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const bgFraction = floodFillWhiteBackground(canvas, ctx);
+      if (bgFraction < minBgFraction) {
+        // 지울 배경이 사실상 없음 (예: 프레임을 꽉 채운 박스 사진) - 일반 JPEG 압축으로 되돌아간다.
+        resolve(compressImage(file, { maxDimension, maxBase64Length }));
+        return;
+      }
+
+      let dataUrl = canvas.toDataURL('image/png');
+      while (dataUrl.length > maxBase64Length && canvas.width > 200) {
+        canvas.width = Math.round(canvas.width * 0.85);
+        canvas.height = Math.round(canvas.height * 0.85);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        floodFillWhiteBackground(canvas, ctx);
+        dataUrl = canvas.toDataURL('image/png');
+      }
+      resolve(dataUrl);
+    };
+    img.onerror = reject;
+    img.src = objectUrl;
+  });
+}
+
 // 페이지에 들어가는 이미지는 자리마다 노출 규격(가로:세로 비율)이 정해져 있다.
 // 다른 비율의 사진을 올리면 레이아웃이 깨지므로, 가운데를 기준으로 잘라내(center crop)
 // 규격 비율에 맞춘 뒤 권장 해상도까지만 줄여서 저장한다.
@@ -415,6 +500,12 @@ export default function Admin() {
     return uploadImage(dataUrl);
   };
 
+  // 제품 "대표 이미지" 전용: 흰 배경을 투명으로 지운 PNG로 변환한 뒤 업로드한다.
+  const readAndUploadProductImage = async (file) => {
+    const dataUrl = await compressProductImage(file);
+    return uploadImage(dataUrl);
+  };
+
   // 페이지 문구·이미지 탭 전용 업로드.
   // 사진은 그 자리의 노출 규격(가로:세로)에 맞춰 가운데를 기준으로 자동 크롭하고,
   // 동영상은 잘라낼 수 없으므로 파일을 그대로 올린다.
@@ -647,7 +738,7 @@ export default function Admin() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      const url = await readAndUpload(file);
+      const url = await readAndUploadProductImage(file);
       setProductForm(prev => ({ ...prev, image: url }));
     } catch (err) {
       alert(isEn ? 'Image upload failed.' : '이미지 업로드에 실패했습니다.');
@@ -690,7 +781,7 @@ export default function Admin() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      const url = await readAndUpload(file);
+      const url = await readAndUploadProductImage(file);
       setEditForm(prev => ({ ...prev, image: url }));
     } catch (err) {
       alert(isEn ? 'Image upload failed.' : '이미지 업로드에 실패했습니다.');
