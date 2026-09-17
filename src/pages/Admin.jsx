@@ -114,6 +114,40 @@ function floodFillWhiteBackground(canvas, ctx, { threshold = 235 } = {}) {
   return removedCount / (width * height);
 }
 
+// 배경을 지우고 나면 피사체 둘레에 투명한 여백이 넓게 남는데(원본 스튜디오 사진이 원래
+// 그렇게 촬영됨), 이 여백을 그대로 두면 어디에 올려도(흰 배경이든 색 배경이든) "빈 공간이
+// 큰 네모"처럼 보인다. 남아있는(알파>0) 픽셀의 바운딩 박스로 크롭해서 피사체가 프레임을
+// 꽉 채우도록 만든다.
+function trimCanvasToContent(canvas, ctx, { padding = 0.03 } = {}) {
+  const { width, height } = canvas;
+  const data = ctx.getImageData(0, 0, width, height).data;
+  let minX = width, minY = height, maxX = -1, maxY = -1;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (data[(y * width + x) * 4 + 3] > 0) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < minX || maxY < minY) return canvas; // 남아있는 내용이 없음 - 그대로 둔다
+  const padX = Math.round((maxX - minX + 1) * padding);
+  const padY = Math.round((maxY - minY + 1) * padding);
+  minX = Math.max(0, minX - padX);
+  minY = Math.max(0, minY - padY);
+  maxX = Math.min(width - 1, maxX + padX);
+  maxY = Math.min(height - 1, maxY + padY);
+  const cw = maxX - minX + 1, ch = maxY - minY + 1;
+  if (cw === width && ch === height) return canvas;
+  const trimmed = document.createElement('canvas');
+  trimmed.width = cw;
+  trimmed.height = ch;
+  trimmed.getContext('2d').drawImage(canvas, minX, minY, cw, ch, 0, 0, cw, ch);
+  return trimmed;
+}
+
 // 제품 "대표 이미지"는 항상 흰 배경을 투명으로 지운 PNG로 저장한다 (JPEG로 올려도 자동 변환).
 // PNG는 화질(quality) 옵션이 없어서 용량 제한에 걸리면 해상도 자체를 줄여야 하므로,
 // 압축 JPEG보다 이 경로의 최종 해상도가 더 낮아질 수 있다.
@@ -143,13 +177,16 @@ function compressProductImage(file, { maxDimension = 1600, maxBase64Length = 850
         return;
       }
 
-      let dataUrl = canvas.toDataURL('image/png');
-      while (dataUrl.length > maxBase64Length && canvas.width > 200) {
-        canvas.width = Math.round(canvas.width * 0.85);
-        canvas.height = Math.round(canvas.height * 0.85);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        floodFillWhiteBackground(canvas, ctx);
-        dataUrl = canvas.toDataURL('image/png');
+      const trimmedCanvas = trimCanvasToContent(canvas, ctx);
+      let dataUrl = trimmedCanvas.toDataURL('image/png');
+      let curCanvas = trimmedCanvas;
+      while (dataUrl.length > maxBase64Length && curCanvas.width > 200) {
+        const nextCanvas = document.createElement('canvas');
+        nextCanvas.width = Math.round(curCanvas.width * 0.85);
+        nextCanvas.height = Math.round(curCanvas.height * 0.85);
+        nextCanvas.getContext('2d').drawImage(curCanvas, 0, 0, nextCanvas.width, nextCanvas.height);
+        curCanvas = nextCanvas;
+        dataUrl = curCanvas.toDataURL('image/png');
       }
       resolve(dataUrl);
     };
