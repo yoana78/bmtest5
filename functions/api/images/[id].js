@@ -17,7 +17,11 @@ export async function onRequestGet(context) {
   const row = await env.DB.prepare('SELECT mime, data FROM images WHERE id = ?').bind(params.id).first();
   if (!row) return new Response('Not found', { status: 404 });
 
-  const binary = Uint8Array.from(atob(row.data), c => c.charCodeAt(0));
+  // 방문자마다 호출되는 경로라서 콜백을 거치는 Uint8Array.from 대신 단순 루프로 디코딩한다.
+  // 이미지 한 장이 base64로 수십만 글자라, 콜백 호출 비용이 쌓이면 Worker CPU 한도(1102)에 걸린다.
+  const text = atob(row.data);
+  const binary = new Uint8Array(text.length);
+  for (let i = 0; i < text.length; i++) binary[i] = text.charCodeAt(i);
   return new Response(binary, {
     headers: {
       'Content-Type': row.mime,
