@@ -150,9 +150,10 @@ function trimCanvasToContent(canvas, ctx, { padding = 0.03 } = {}) {
 
 // 제품 "대표 이미지"는 예외 없이 흰 배경을 투명으로 지운 PNG로 저장한다.
 // JPEG로 올려도 자동으로 누끼를 따서 PNG로 변환하며, 지워진 배경만큼 여백을 잘라낸다.
+// 카탈로그 한 페이지에 수십 장이 함께 로드되므로 저장 한도(약 850KB)보다 낮게 잡는다.
 // PNG는 화질(quality) 옵션이 없어서 용량 제한에 걸리면 해상도 자체를 줄여야 하므로,
 // 압축 JPEG보다 이 경로의 최종 해상도가 더 낮아질 수 있다.
-function compressProductImage(file, { maxDimension = 1400, maxBase64Length = 850000 } = {}) {
+function compressProductImage(file, { maxDimension = 1100, maxBase64Length = 500000 } = {}) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
