@@ -246,7 +246,7 @@ export default function Catalog() {
         <div className="bm-sub-hero-content animate-on-scroll fade-up is-visible">
           <span className="bm-sub-hero-tag">ALL PRODUCT PORTFOLIO</span>
           <h1 className="bm-sub-hero-title">
-            {isEn ? 'Product Catalog' : '제품 카다로그'}
+            {isEn ? 'Product Catalog' : '제품 카탈로그'}
           </h1>
           <p className="bm-sub-hero-desc">
             {isEn
