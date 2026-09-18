@@ -148,10 +148,11 @@ function trimCanvasToContent(canvas, ctx, { padding = 0.03 } = {}) {
   return trimmed;
 }
 
-// 제품 "대표 이미지"는 항상 흰 배경을 투명으로 지운 PNG로 저장한다 (JPEG로 올려도 자동 변환).
+// 제품 "대표 이미지"는 예외 없이 흰 배경을 투명으로 지운 PNG로 저장한다.
+// JPEG로 올려도 자동으로 누끼를 따서 PNG로 변환하며, 지워진 배경만큼 여백을 잘라낸다.
 // PNG는 화질(quality) 옵션이 없어서 용량 제한에 걸리면 해상도 자체를 줄여야 하므로,
 // 압축 JPEG보다 이 경로의 최종 해상도가 더 낮아질 수 있다.
-function compressProductImage(file, { maxDimension = 1600, maxBase64Length = 850000, minBgFraction = 0.03 } = {}) {
+function compressProductImage(file, { maxDimension = 1400, maxBase64Length = 850000 } = {}) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
@@ -170,13 +171,7 @@ function compressProductImage(file, { maxDimension = 1600, maxBase64Length = 850
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      const bgFraction = floodFillWhiteBackground(canvas, ctx);
-      if (bgFraction < minBgFraction) {
-        // 지울 배경이 사실상 없음 (예: 프레임을 꽉 채운 박스 사진) - 일반 JPEG 압축으로 되돌아간다.
-        resolve(compressImage(file, { maxDimension, maxBase64Length }));
-        return;
-      }
-
+      floodFillWhiteBackground(canvas, ctx);
       const trimmedCanvas = trimCanvasToContent(canvas, ctx);
       let dataUrl = trimmedCanvas.toDataURL('image/png');
       let curCanvas = trimmedCanvas;
