@@ -1,4 +1,5 @@
 import { requireAdmin } from '../../_auth.js';
+import { imageIdsIn, deleteUnreferencedImages, cleanupReplacedImages } from '../../_images.js';
 
 // 제품 id에 한글이 포함된 경우, Cloudflare Pages Functions는 URL 경로의
 // %-인코딩을 자동으로 디코딩해주지 않아 params.id가 인코딩된 그대로 들어온다.
@@ -42,6 +43,9 @@ export async function onRequestPut(context) {
     .bind(JSON.stringify(merged), id)
     .run();
 
+  // 대표 이미지나 상세 이미지를 교체했다면 예전 이미지는 아무도 안 쓰게 되므로 지운다.
+  await cleanupReplacedImages(env, parsedExisting, merged);
+
   return Response.json({ ok: true, product: merged });
 }
 
@@ -52,6 +56,12 @@ export async function onRequestDelete(context) {
 
   const { env, params } = context;
   const id = decodeId(params.id);
+  // 제품이 쓰던 이미지 주소를 먼저 확보한 뒤 제품을 지우고, 다른 곳에서도 안 쓰이면 이미지도 지운다.
+  const existing = await env.DB.prepare('SELECT data FROM products WHERE id = ?').bind(id).first();
+  const usedImages = existing ? imageIdsIn(existing.data) : [];
+
   await env.DB.prepare('DELETE FROM products WHERE id = ?').bind(id).run();
-  return Response.json({ ok: true });
+  const removedImages = await deleteUnreferencedImages(env, usedImages);
+
+  return Response.json({ ok: true, removedImages });
 }

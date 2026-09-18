@@ -1,4 +1,5 @@
 import { requireAdmin } from '../../_auth.js';
+import { imageIdsIn, deleteUnreferencedImages, cleanupReplacedImages } from '../../_images.js';
 
 // PUT /api/brands/:id — 기존 브랜드 수정 (부분 업데이트, 관리자 전용)
 export async function onRequestPut(context) {
@@ -35,6 +36,9 @@ export async function onRequestPut(context) {
       .run();
   }
 
+  // 로고를 교체했다면 예전 로고 이미지는 아무도 안 쓰게 되므로 지운다.
+  await cleanupReplacedImages(env, parsedExisting, merged);
+
   return Response.json({ ok: true, brand: merged });
 }
 
@@ -44,6 +48,13 @@ export async function onRequestDelete(context) {
   if (unauthorized) return unauthorized;
 
   const { env, params } = context;
+
+  // 브랜드가 쓰던 로고 주소를 먼저 확보한 뒤 브랜드를 지우고, 다른 곳에서도 안 쓰이면 이미지도 지운다.
+  const existing = await env.DB.prepare('SELECT data FROM brands WHERE id = ?').bind(params.id).first();
+  const usedImages = existing ? imageIdsIn(existing.data) : [];
+
   await env.DB.prepare('DELETE FROM brands WHERE id = ?').bind(params.id).run();
-  return Response.json({ ok: true });
+  const removedImages = await deleteUnreferencedImages(env, usedImages);
+
+  return Response.json({ ok: true, removedImages });
 }
